@@ -8,7 +8,9 @@ blinker==1.8.2
 itsdangerous==2.2.0
 Jinja2==3.1.4
 Werkzeug==3.0.3
-Pandas
-Matplotlib
-Sklearn
-Joblib
+Flask
+Flask-RESTX
+joblib
+pandas
+matplotlib
+

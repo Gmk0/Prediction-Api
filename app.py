@@ -150,5 +150,41 @@ class Stats(Resource):
         else:
             return jsonify({"error": "Le fichier predictions.csv n'existe pas encore."}), 404
 
+
+@ns.route('/update_model')
+class UpdateModel(Resource):
+    def post(self):
+        try:
+            # Vérifier si les fichiers sont bien envoyés
+            if 'model' not in request.files or 'scaler' not in request.files or 'columns' not in request.files:
+                return make_response(jsonify({'error': 'Missing files'}), 400)
+
+            # Récupérer les fichiers envoyés
+            model_file = request.files['model']
+            scaler_file = request.files['scaler']
+            columns_file = request.files['columns']
+
+            # Sauvegarder les fichiers reçus dans le répertoire de l'application
+            model_path = os.path.join('models', 'Random_Forest_model_new.pkl')
+            scaler_path = os.path.join('models', 'scaler_age_new.pkl')
+            columns_path = os.path.join('models', 'colonnes.pkl')
+
+            # Sauvegarder les fichiers
+            model_file.save(model_path)
+            scaler_file.save(scaler_path)
+            columns_file.save(columns_path)
+
+            # Charger les nouveaux fichiers
+            global model, scaler_age, columns
+            model = joblib.load(model_path)
+            scaler_age = joblib.load(scaler_path)
+            columns = joblib.load(columns_path)
+
+            return make_response(jsonify({'message': 'Model updated successfully'}), 200)
+        
+        except Exception as e:
+            return make_response(jsonify({'error': str(e)}), 500)
+
+
 api.add_namespace(ns, path='/predict')
 
